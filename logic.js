@@ -1,5 +1,3 @@
-const { use } = require("react");
-
 function loginBtnClicked(){
     const userName = document.getElementById("username").value;
     const password = document.getElementById("password").value;
@@ -82,6 +80,57 @@ function UIsetup(){
 UIsetup();
 
 
+function createPost(){
+    const postId = document.getElementById("edit-clicked").value || null;
+
+
+    const title = document.getElementById("post-title").value;
+    const body = document.getElementById("post-body").value;
+    const image = document.getElementById("post-image").files[0];
+    const token = localStorage.getItem("token");
+
+    const formData = new FormData();
+    if(image){
+        formData.append("image" , image);
+    }
+    formData.append("body" , body);
+    formData.append("title" , title);
+
+    const Headers = {
+        "Authorization" : `Bearer ${token}`
+    }
+
+    let url = ``;
+    if(postId){
+        // edit
+        url = `https://tarmeezacademy.com/api/v1/posts/${postId}`
+        formData.append("_method" , "put")
+        msg = "edited";
+    }else{
+        // create
+        url = "https://tarmeezacademy.com/api/v1/posts";
+        msg = "edited";
+        // logic = displayPostDetails();
+    }
+
+    axios.post(url , formData , {
+        headers : Headers
+    })
+    .then((response) => {
+        toastMsg(`post ${msg} successfully` , "success");
+        bootstrap.Modal.getInstance(document.getElementById("create-post-modal")).hide();
+
+    }).catch((error) => {
+        console.log(error)
+        return;
+        toastMsg(error.response.data.message , "error");
+        document.getElementById("success-toast").style.backgroundColor = "#c26d75ff";
+    })
+
+
+    // getPosts()
+}
+
 
 function logoutBtnClicked(){
     localStorage.removeItem("token");
@@ -145,33 +194,11 @@ function toastMsg(msg , state = "success"){
 }
 
 
-// function editPost(id){
-//     const postData = JSON.parse(localStorage.getItem("postData"));
-//     console.log(postData)
-//     axios.put(`https://tarmeezacademy.com/api/v1/posts/${id}`)
-//     .then((response) => {
-//         console.log(response.data)
-//     }).catch(error => {
-//         console.log(error)
-//     })
-// }
+function editBtnClicked(data){
+    const postData = JSON.parse(decodeURIComponent(data));
+    document.getElementById("edit-clicked").value = postData.id;
 
+    document.getElementById("post-title").value = postData.title;
+    document.getElementById("post-body").value = postData.body;
+}
 
-
-
-// function deletePost(id){
-//     const token = localStorage.getItem("token");
-//     const headers = {
-//         "Authorization" : `Bearer ${token}`
-//     }
-
-//     axios.delete(`https://tarmeezacademy.com/api/v1/posts/${id}` , {
-//         headers : headers
-//     })
-//     .then((response) => {
-//         localStorage.removeItem("postData");
-//         toastMsg("post deleted successfully" , "success");
-//     }).catch((error) => {
-//         console.log(error)
-//     })
-// }
