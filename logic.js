@@ -109,7 +109,7 @@ function createPost(){
     }else{
         // create
         url = "https://tarmeezacademy.com/api/v1/posts";
-        msg = "edited";
+        msg = "created";
         // logic = displayPostDetails();
     }
 
