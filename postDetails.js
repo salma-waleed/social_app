@@ -18,8 +18,10 @@
                                 <strong>${data.author.username}</strong>
                             </div>
                             <div>
-                                ${userId === authorId ? 
-                                `<button class="btn btn-secondary btn-sm" data-bs-toggle="modal" data-bs-target="#create-post-modal" data-bs-whatever="@mdo" onclick = "editBtnClicked('${encodeURIComponent(JSON.stringify(data))}')"> Edit</button>` : ``}
+                                ${userId === authorId ? `
+                                    <button class="btn btn-secondary btn-sm" data-bs-toggle="modal" data-bs-target="#create-post-modal" data-bs-whatever="@mdo" onclick = "editBtnClicked('${encodeURIComponent(JSON.stringify(data))}')"> Edit</button>
+                                    <button class="btn btn-danger btn-sm" data-bs-toggle="modal" data-bs-target="#delete-post-modal" data-bs-whatever="@mdo" onclick = "deleteBtnClicked(${data.id})"> <i class="fa-solid fa-trash-can"></i></button>
+                                ` : ``}
                             </div>
                         </div>
                         <div class="card-body">
@@ -92,4 +94,29 @@
                 document.getElementById("success-toast").style.backgroundColor = "#c26d75ff";
             })
         }
+
+
+let id;
+function deleteBtnClicked(postId){
+    id = postId;
+}
+
+function confirmBtnClicked(){
+    if(id){
+        let token = localStorage.getItem(("token"))
+
+        const Headers = {
+        "Authorization" : `Bearer ${token}`
+        }
+
+        axios.delete(`https://tarmeezacademy.com/api/v1/posts/${id}` , {
+            headers : Headers
+        }).then((response) => {
+            bootstrap.Modal.getInstance(document.getElementById("delete-post-modal")).hide();
+            toastMsg("post deleted successfully" , "success");
+        }).catch((error) => {
+            console.log(error)
+        })
+    }
+}
 

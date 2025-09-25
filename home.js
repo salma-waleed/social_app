@@ -72,6 +72,6 @@ function getPosts(page){
 function displayPostDetails(id){
     window.location.href = `postDetails.html?id=${id}`;
 }
-    
+
 getPosts();
 UIsetup();
